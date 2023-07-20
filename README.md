@@ -1,70 +1,87 @@
-# Getting Started with Create React App
+# 안녕하세요 신입 웹 프론트엔드 개발자 성해련 입니다.
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+<br>
 
-## Available Scripts
+### Rien_books 창작
+### "Rest API 활용 도서 검색 서비스"
 
-In the project directory, you can run:
+<br>
 
-### `npm start`
+![Rien_books](./rienbooks.png)
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+<br>
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+- Demo : https://hi-rien.github.io/rien_books/
 
-### `npm test`
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+<br>
 
-### `npm run build`
+---
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### 개발 목표
+  - KAKAO Rest API를 활용한 도서 검색 React페이지 구현
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+  <br>
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### 사용 기술
+  - HTML
+  - CSS
+  - React
+  - Rest API
+  - Figma
 
-### `npm run eject`
+  <br>
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+## Point
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+**KAKAO API를 받아 도서 검색 기능 구현**
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+<br>
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+API 호출
+```jsx
 
-## Learn More
+  const REST_API_KEY = "6fa6cd762f56f824defac792de87367a"
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+  const[query,setQuery] = useState('선물');
+  const[page,setPage] = useState(1);
+  const[last,setLast] = useState(1);
+  const[target,setTarget] = useState('title')
+  const [documents,setDocuments] = useState(null);
+  
+  const callAPI = async() =>{
+      const url = `https://dapi.kakao.com/v3/search/book?target=${target}&query=${query}&page=${page}`;
+      const config = {headers:`Authorization: KakaoAK ${REST_API_KEY}`};
+      const result = await axios(url,config);
+      setDocuments(result.data.documents);
+      const total = result.data.meta.pageable_count;
+      setLast(Math.ceil(total/10))
+      console.log(result.data.documents)
+  }
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+    useEffect(()=>{
+      callAPI();
+  },[page])
 
-### Code Splitting
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+<br>
 
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+API호출 하여 받은 값을 map함수를 이용해 자식 컴포넌트로 전송
+```jsx
+<div className='documents'>
+  {documents.map(d=>(
+    <Result 
+      key={d.isbn}
+      title={d.title}
+      authors={d.authors}
+      publisher={d.publisher}
+      thumbnail={d.thumbnail}
+      contents={d.contents}
+      price={d.price}
+      isbn = {d.isbn}
+      url = {d.url}
+      />
+  ))}
+</div>
+```

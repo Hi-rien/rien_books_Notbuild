@@ -13,6 +13,7 @@ export default function Home() {
   const[last,setLast] = useState(1);
   const[target,setTarget] = useState('title')
   const [documents,setDocuments] = useState(null);
+  
   const callAPI = async() =>{
       const url = `https://dapi.kakao.com/v3/search/book?target=${target}&query=${query}&page=${page}`;
       const config = {headers:`Authorization: KakaoAK ${REST_API_KEY}`};
